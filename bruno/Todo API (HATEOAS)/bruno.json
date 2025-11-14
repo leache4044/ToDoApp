@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Todo API (HATEOAS)",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

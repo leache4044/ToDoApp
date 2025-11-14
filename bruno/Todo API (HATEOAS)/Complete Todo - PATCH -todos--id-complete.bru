@@ -1,0 +1,15 @@
+meta {
+  name: Complete Todo - PATCH /todos/:id/complete
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/todos/{{todoId}}/complete
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

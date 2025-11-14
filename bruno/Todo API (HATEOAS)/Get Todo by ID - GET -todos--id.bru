@@ -1,0 +1,15 @@
+meta {
+  name: Get Todo by ID - GET /todos/:id
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/todos/{{todoId}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
