@@ -1,0 +1,19 @@
+meta {
+  name: "Update Todo"
+  type: "http"
+}
+
+request {
+  method: "PUT"
+  url: "http://localhost:8000/todos/1"
+
+  header {
+    name: "Content-Type"
+    value: "application/json"
+  }
+
+  body: json {
+    "title": "Write Bruno tests (updated)",
+    "description": "Validate the Todo API via Bruno with an updated task."
+  }
+}
