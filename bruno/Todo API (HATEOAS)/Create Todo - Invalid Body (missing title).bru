@@ -1,0 +1,25 @@
+meta {
+  name: Create Todo - Invalid Body (missing title)
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/todos
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "description": "This request is missing the title field."
+  }
+}
+
+settings {
+  encodeUrl: true
+}

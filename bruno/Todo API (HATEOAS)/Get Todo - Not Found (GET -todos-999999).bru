@@ -1,0 +1,15 @@
+meta {
+  name: Get Todo - Not Found (GET /todos/999999)
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/todos/999999
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

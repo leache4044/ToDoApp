@@ -1,0 +1,26 @@
+meta {
+  name: Update Todo - PUT /todos/:id
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/todos/{{todoId}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Write Bruno tests (updated)",
+    "description": "Validate the Todo API via Bruno with an updated task."
+  }
+}
+
+settings {
+  encodeUrl: true
+}
