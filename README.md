@@ -11,13 +11,14 @@ A simple Go web server project.
 ### Running the Application
 
 1. Clone the repository
-2. Run the application:
+2. Run the application from the repo root:
    ```bash
-   go run main.go
+   go run ./cmd/server
    ```
-3. Open your browser and visit: http://localhost:8080
+3. Open your browser and visit: http://localhost:8000
 
 ## Project Structure
 
-- `main.go` - Main application entry point
+- `cmd/server` - Main application entry point (HTTP server)
+- `internal/todo` - Todo models, store, service facade, and HTTP handlers
 - `go.mod` - Go module definition
