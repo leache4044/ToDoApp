@@ -91,6 +91,7 @@ func NewTodoStore() *TodoStore {
 	}
 }
 
+// GetAll returns all todos currently stored in memory.
 func (s *TodoStore) GetAll() []*Todo {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -102,6 +103,8 @@ func (s *TodoStore) GetAll() []*Todo {
 	return todos
 }
 
+// GetByID returns a todo by its ID.
+// The boolean indicates whether a todo with that ID exists.
 func (s *TodoStore) GetByID(id int) (*Todo, bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -110,6 +113,7 @@ func (s *TodoStore) GetByID(id int) (*Todo, bool) {
 	return todo, exists
 }
 
+// Create adds a new todo to the store using the provided input.
 func (s *TodoStore) Create(input TodoInput) *Todo {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -128,6 +132,8 @@ func (s *TodoStore) Create(input TodoInput) *Todo {
 	return todo
 }
 
+// Update modifies an existing todo identified by id.
+// The boolean indicates whether the todo was found.
 func (s *TodoStore) Update(id int, input TodoInput) (*Todo, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -143,6 +149,8 @@ func (s *TodoStore) Update(id int, input TodoInput) (*Todo, bool) {
 	return todo, true
 }
 
+// Complete marks the todo with the given ID as completed.
+// The boolean indicates whether the todo was found.
 func (s *TodoStore) Complete(id int) (*Todo, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -156,6 +164,8 @@ func (s *TodoStore) Complete(id int) (*Todo, bool) {
 	return todo, true
 }
 
+// Delete removes the todo with the given ID from the store.
+// It returns true if a todo was deleted, or false if it did not exist.
 func (s *TodoStore) Delete(id int) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -169,6 +179,7 @@ func (s *TodoStore) Delete(id int) bool {
 	return true
 }
 
+// buildTodoLinks constructs the HATEOAS links for a single todo resource.
 func buildTodoLinks(todo *Todo, baseURL string) Links {
 	links := Links{
 		Self: &Link{
@@ -199,6 +210,7 @@ func buildTodoLinks(todo *Todo, baseURL string) Links {
 	return links
 }
 
+// buildCollectionLinks constructs HATEOAS links for a paginated todos collection.
 func buildCollectionLinks(baseURL string, page, perPage, total int) CollectionLinks {
 	totalPages := 1
 	if total > 0 {
@@ -242,6 +254,7 @@ func buildCollectionLinks(baseURL string, page, perPage, total int) CollectionLi
 	return links
 }
 
+// buildErrorLinks constructs navigation links included in error responses.
 func buildErrorLinks(baseURL string) Links {
 	return Links{
 		Todos: &Link{
@@ -251,11 +264,13 @@ func buildErrorLinks(baseURL string) Links {
 	}
 }
 
+// TodoAPI provides HTTP handlers for the Todo REST API.
 type TodoAPI struct {
 	service Service
 	baseURL string
 }
 
+// NewTodoAPI constructs a new TodoAPI using the provided base URL and Service facade.
 func NewTodoAPI(baseURL string, service Service) *TodoAPI {
 	return &TodoAPI{
 		service: service,
@@ -263,6 +278,7 @@ func NewTodoAPI(baseURL string, service Service) *TodoAPI {
 	}
 }
 
+// GetRoot handles GET / and returns the API root document with navigation links.
 func (api *TodoAPI) GetRoot(w http.ResponseWriter, r *http.Request) {
 	root := APIRoot{
 		Message: "Welcome to the HATEOAS Todo API",
@@ -281,6 +297,7 @@ func (api *TodoAPI) GetRoot(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(root)
 }
 
+// GetTodos handles GET /todos and returns a paginated list of todos.
 func (api *TodoAPI) GetTodos(w http.ResponseWriter, r *http.Request) {
 	pageStr := r.URL.Query().Get("page")
 	perPageStr := r.URL.Query().Get("per_page")
@@ -343,6 +360,7 @@ func (api *TodoAPI) GetTodos(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(collection)
 }
 
+// GetTodo handles GET /todos/{id} and returns a single todo by ID.
 func (api *TodoAPI) GetTodo(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
@@ -364,6 +382,7 @@ func (api *TodoAPI) GetTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(todoResponse)
 }
 
+// CreateTodo handles POST /todos and creates a new todo from the request body.
 func (api *TodoAPI) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	var input TodoInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -385,6 +404,7 @@ func (api *TodoAPI) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(todo)
 }
 
+// UpdateTodo handles PUT /todos/{id} and updates an existing todo.
 func (api *TodoAPI) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
@@ -416,6 +436,7 @@ func (api *TodoAPI) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(todo)
 }
 
+// CompleteTodo handles PATCH /todos/{id}/complete and marks a todo as completed.
 func (api *TodoAPI) CompleteTodo(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
@@ -436,6 +457,7 @@ func (api *TodoAPI) CompleteTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(todo)
 }
 
+// DeleteTodo handles DELETE /todos/{id} and removes the todo.
 func (api *TodoAPI) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
@@ -453,6 +475,7 @@ func (api *TodoAPI) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// sendError writes a JSON error response with the given status code and message.
 func (api *TodoAPI) sendError(w http.ResponseWriter, statusCode int, error, message string) {
 	errorResponse := ErrorResponse{
 		Error:   error,
@@ -465,6 +488,9 @@ func (api *TodoAPI) sendError(w http.ResponseWriter, statusCode int, error, mess
 	json.NewEncoder(w).Encode(errorResponse)
 }
 
+// NewRouter constructs and configures the chi router for the Todo API.
+// It wires the in-memory store, Service facade, middleware, routes,
+// and seeds the store with some sample data.
 func NewRouter(baseURL string) http.Handler {
 	store := NewTodoStore()
 	service := NewService(store)
