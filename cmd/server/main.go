@@ -8,6 +8,9 @@ import (
 	"github.com/efrem/windsurf/internal/todo"
 )
 
+// main is the entrypoint for the Todo API HTTP server.
+// It configures the listen port and base URL, builds the router,
+// and starts the HTTP server on port 8000.
 func main() {
 	port := ":8000"
 	baseURL := "http://localhost:8000"
