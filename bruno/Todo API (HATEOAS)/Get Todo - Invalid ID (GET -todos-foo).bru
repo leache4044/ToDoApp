@@ -1,0 +1,15 @@
+meta {
+  name: Get Todo - Invalid ID (GET /todos/foo)
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/todos/foo
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

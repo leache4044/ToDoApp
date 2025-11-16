@@ -1,0 +1,15 @@
+meta {
+  name: Delete Todo - DELETE /todos/:id
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/todos/{{todoId}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
